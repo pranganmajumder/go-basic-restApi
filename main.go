@@ -32,11 +32,16 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w , "Homepage Endpoint Hit")
 }
 
+func testPostArticles(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Test POST endpoint worked")
+}
+
 func handleRequests() {
 	myRouter := mux.NewRouter().StrictSlash(true)
 
 	myRouter.HandleFunc("/", homepage)
 	myRouter.HandleFunc("/articles", allArticles).Methods("GET")
+	myRouter.HandleFunc("/articles", testPostArticles).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
 
