@@ -1,8 +1,13 @@
+//https://www.youtube.com/watch?v=W5b64DXeP0o
+//https://tutorialedge.net/golang/creating-restful-api-with-golang/
+
+
 package main
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
@@ -28,9 +33,11 @@ func homepage(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleRequests() {
-	http.HandleFunc("/", homepage)
-	http.HandleFunc("/articles", allArticles)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	myRouter := mux.NewRouter().StrictSlash(true)
+
+	myRouter.HandleFunc("/", homepage)
+	myRouter.HandleFunc("/articles", allArticles).Methods("GET")
+	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
 
 
