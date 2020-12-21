@@ -56,25 +56,25 @@ func createNewUser(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body
 	reqBody , _ := ioutil.ReadAll(r.Body)
-	fmt.Println("createdNewUser")
-	//fmt.Fprintf(w, "%v", string(reqBody))
+	fmt.Println("createdNewUser" )
+	// fmt.Fprintf(w, "%v", string(reqBody)) // print request body in responseBody
 
-
-	// now unmarshal this into a new User struct
-	var user User
-	json.Unmarshal(reqBody, &user)
-
-
-
+	vars := mux.Vars(r)
+	id := vars["id"]
 	// check if ID is in the list or not
 	for _, u := range Users{
-		if u.Id == user.Id{
+		if u.Id == id{
 			fmt.Println("User ID matched")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("400 - User ID already contains in the list. Please Change your ID"))
 			return
 		}
 	}
+
+	// now unmarshal this into a new User struct
+	var user User
+	json.Unmarshal(reqBody, &user)
+
 
 	// append this to our Users array
 	// update our global Users array to include our new User
@@ -103,13 +103,15 @@ func deleteUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+
 func handleRequests()  {
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage).Methods("GET")
 	myRouter.HandleFunc("/users", returnAllUser).Methods("GET")
 
 	// Ordering is important here! This has to be defined before the other '/user' endpoint
-	myRouter.HandleFunc("/user", createNewUser).Methods("POST")
+	myRouter.HandleFunc("/user/{id}", createNewUser).Methods("POST")
 	myRouter.HandleFunc("/user/{id}", deleteUser).Methods("DELETE")
 	myRouter.HandleFunc("/user/{id}", returnSingleUser).Methods("GET")
 
