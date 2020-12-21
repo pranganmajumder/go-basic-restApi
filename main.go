@@ -37,21 +37,21 @@ func returnSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	// Loop over all of our Users
 	// if the user.Id equals the key we pass in return the article encoded as JSON
-	var flag = false
+
 	for _, user := range Users{
 		if user.Id == key{
 			json.NewEncoder(w).Encode(user)
-			flag = true
+			return
 		}
 	}
 	// if the user Id is not found in the list return a bad request
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
-	if flag == false{
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte ("400 - User Not Found in the list"))
-	}
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte ("400 - User Not Found in the list"))
+
 }
 
+// Endpoint : /user/id
 func createNewUser(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body
@@ -82,25 +82,49 @@ func createNewUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user) // send the json encoded format
 }
 
+// (POST) Endpoint : /user/id
+func updateUser(w http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	var user User
+
+	if err := json.NewDecoder(r.Body).Decode(&user) ; err!= nil{
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	for index, u := range Users{
+		if u.Id == vars["id"]{
+			fmt.Println("Calling updateUser function")
+			Users[index] = user
+			json.NewEncoder(w).Encode(user) // you'll see the json user data in the response body
+			return
+		}
+	}
+
+	// if ID is not found return an error
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte("400 - Requested User is not present in the list , Update won't work"))
+
+}
+
+// (DELETE) Endpoint : /user/id
 func deleteUser(w http.ResponseWriter, r *http.Request) {
 	// we will need to parse the path parameters
 	vars := mux.Vars(r)
 	// we will need to extract the `id` of the user we wish to delete
 	id := vars["id"]
 
-	var flag = false
 	for index, user := range Users{
 		if user.Id == id{
 			Users = append(Users[:index] , Users[index+1:]...)
-			flag = true
+			json.NewEncoder(w).Encode(user) // you'll see the deleted json data in the response body
+			return
 		}
 	}
 	// if user Id is not present in the list , return a error code
-	if flag == false{
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("400 - User not found in the list"))
-	}
-
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte("400 - User not found in the list"))
 }
 
 
@@ -112,6 +136,7 @@ func handleRequests()  {
 
 	// Ordering is important here! This has to be defined before the other '/user' endpoint
 	myRouter.HandleFunc("/user/{id}", createNewUser).Methods("POST")
+	myRouter.HandleFunc("/user/{id}", updateUser).Methods("PUT")
 	myRouter.HandleFunc("/user/{id}", deleteUser).Methods("DELETE")
 	myRouter.HandleFunc("/user/{id}", returnSingleUser).Methods("GET")
 
