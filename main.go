@@ -20,6 +20,19 @@ type User struct {
 	Occupation string `json:"occupation"`
 }
 var Users []User
+func parseID(request *http.Request) string {
+	params := mux.Vars(request)
+	ID := params["id"]
+	if len(ID) > 0 {
+		return ID
+	}
+
+	values := request.URL.Query()
+	if val, ok := values["id"]; ok && len(val) > 0 {
+		return val[0]
+	}
+	return ""
+}
 
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w , "Wellcome to homepage")
@@ -31,23 +44,34 @@ func returnAllUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(Users)
 }
 
-func returnSingleUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	key := vars["id"]
+func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("This is our ReturnSingleUser function")
+	//vars := mux.Vars(r)
+	//key := vars["id"]
+
+	key := parseID(r)
+	//fmt.Printf("Type of key is %T  ", key)
+	fmt.Println("Key:   ", key)
 
 	// Loop over all of our Users
 	// if the user.Id equals the key we pass in return the article encoded as JSON
 
+
+	fmt.Println("Users    is  ", Users)
 	for _, user := range Users{
+		fmt.Println("user : ", user)
 		if user.Id == key{
+			w.WriteHeader(http.StatusOK)
+			fmt.Println("got Status Code")
 			json.NewEncoder(w).Encode(user)
 			return
 		}
 	}
 	// if the user Id is not found in the list return a bad request
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
-	w.WriteHeader(http.StatusBadRequest)
-	w.Write([]byte ("400 - User Not Found in the list"))
+	w.WriteHeader(http.StatusNoContent)
+	//w.Write([]byte ("400 - User Not Found in the list"))
+	fmt.Println("Exited from function")
 
 }
 
@@ -138,15 +162,19 @@ func handleRequests()  {
 	myRouter.HandleFunc("/user/{id}", createNewUser).Methods("POST")
 	myRouter.HandleFunc("/user/{id}", updateUser).Methods("PUT")
 	myRouter.HandleFunc("/user/{id}", deleteUser).Methods("DELETE")
-	myRouter.HandleFunc("/user/{id}", returnSingleUser).Methods("GET")
+	myRouter.HandleFunc("/user/{id}", ReturnSingleUser).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":8080",myRouter))
 }
 
-func main() {
+func DBInit()  {
 	Users = []User{
 		User{Id:         "1", Name:       "Prangan", Varsity:    "CoU", Occupation: "Student"},
 		User{Id:         "2", Name:       "Sakib", Varsity:    "NSU", Occupation: "software Engineer"},
 	}
+}
+
+func main() {
+	DBInit()
 	handleRequests()
 }
