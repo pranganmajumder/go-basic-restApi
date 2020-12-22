@@ -5,12 +5,14 @@
 package api
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type User struct {
@@ -45,36 +47,54 @@ func returnAllUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("This is our ReturnSingleUser function")
+	header := r.Header.Get("Authorization")
+
+	// added Basic authorization
+	if ok:= BasicAuthentication(header); ok==false{
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Authorization failed"))
+		return
+	}
+	//fmt.Println("Header   ", header)
+	//fmt.Println("This is our ReturnSingleUser function")
 	//vars := mux.Vars(r)
 	//key := vars["id"]
 
 	key := parseID(r)
 	//fmt.Printf("Type of key is %T  ", key)
-	fmt.Println("Key:   ", key)
+	//fmt.Println("Key:   ", key)
 
 	// Loop over all of our Users
 	// if the user.Id equals the key we pass in return the article encoded as JSON
 
 
-	fmt.Println("Users    is  ", Users)
+	//fmt.Println("Users    is  ", Users)
 	for _, user := range Users{
-		fmt.Println("user : ", user)
+		//fmt.Println("user : ", user)
 		if user.Id == key{
 			w.WriteHeader(http.StatusOK)
-			fmt.Println("got Status Code")
+			//fmt.Println("got Status Code")
 			json.NewEncoder(w).Encode(user)
 			return
 		}
 	}
 	// if the user Id is not found in the list return a bad request
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
-	w.WriteHeader(http.StatusNoContent)
-	w.Write([]byte (" 404 - User Not Found in the list"))
-	//fmt.Println("errrrr : " , err)
+	w.WriteHeader(http.StatusBadRequest)
+	w.Write([]byte("400 - User not found in the list"))
+	//fmt.Println("Yea")
+}
 
-	fmt.Println("Exited from function")
-
+func BasicAuthentication(header string)bool  {
+	b := strings.Split(header , " ")
+	//fmt.Println("B   =  ", b[1])
+	decoded , _ := base64.StdEncoding.DecodeString(b[1])
+	//fmt.Println("encoded  :  " , string(encoded))
+	name := strings.Split(string(decoded), ":")
+	if name[0] == "prangan" && name[1] == "1234"{
+		return true
+	}
+	return false
 }
 
 // Endpoint : /user/id
