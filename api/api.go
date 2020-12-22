@@ -39,10 +39,20 @@ func parseID(request *http.Request) string {
 func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w , "Wellcome to homepage")
 	fmt.Println("Endpoint Hit: homepage")
+
 }
 
-func returnAllUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint Hit:  returnAllArticles")
+func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Endpoint Hit:  returnAllUser")
+
+
+	header := r.Header.Get("Authorization")
+	// added Basic authorization
+	if ok:= BasicAuthentication(header); ok==false{
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Authorization failed"))
+		return
+	}
 	json.NewEncoder(w).Encode(Users)
 }
 
@@ -98,7 +108,15 @@ func BasicAuthentication(header string)bool  {
 }
 
 // Endpoint : /user/id
-func createNewUser(w http.ResponseWriter, r *http.Request) {
+func CreateNewUser(w http.ResponseWriter, r *http.Request) {
+	header := r.Header.Get("Authorization")
+	// added Basic authorization
+	if ok:= BasicAuthentication(header); ok==false{
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Authorization failed"))
+		return
+	}
+
 	// get the body of our POST request
 	// return the string response containing the request body
 	reqBody , _ := ioutil.ReadAll(r.Body)
@@ -129,7 +147,14 @@ func createNewUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // (POST) Endpoint : /user/id
-func updateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	header := r.Header.Get("Authorization")
+	// added Basic authorization
+	if ok:= BasicAuthentication(header); ok==false{
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Authorization failed"))
+		return
+	}
 
 	vars := mux.Vars(r)
 	var user User
@@ -155,7 +180,15 @@ func updateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // (DELETE) Endpoint : /user/id
-func deleteUser(w http.ResponseWriter, r *http.Request) {
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	header := r.Header.Get("Authorization")
+	// added Basic authorization
+	if ok:= BasicAuthentication(header); ok==false{
+		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Authorization failed"))
+		return
+	}
+
 	// we will need to parse the path parameters
 	vars := mux.Vars(r)
 	// we will need to extract the `id` of the user we wish to delete
@@ -179,12 +212,12 @@ func HandleRequests(port string)  {
 	DBInit()
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage).Methods("GET")
-	myRouter.HandleFunc("/users", returnAllUser).Methods("GET")
+	myRouter.HandleFunc("/users", ReturnAllUser).Methods("GET")
 
 	// Ordering is important here! This has to be defined before the other '/user' endpoint
-	myRouter.HandleFunc("/user/{id}", createNewUser).Methods("POST")
-	myRouter.HandleFunc("/user/{id}", updateUser).Methods("PUT")
-	myRouter.HandleFunc("/user/{id}", deleteUser).Methods("DELETE")
+	myRouter.HandleFunc("/user/{id}", CreateNewUser).Methods("POST")
+	myRouter.HandleFunc("/user/{id}", UpdateUser).Methods("PUT")
+	myRouter.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
 	myRouter.HandleFunc("/user/{id}", ReturnSingleUser).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":"+port,myRouter))
