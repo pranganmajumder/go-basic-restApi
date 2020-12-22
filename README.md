@@ -11,7 +11,7 @@
 
 
 
-## Implement CLI
+## Add CLI command to run server
 
 ### To get cobra module , it'll add cobra in your go.mod file
 
@@ -36,3 +36,15 @@ Run the binary file ``` $ go-restApi_basic start```
 ___
 * ```go-restApi_basic start -h``` or ```go-restApi_basic start -help```
 * to change the default port  ```go-restApi_basic start --port=8000```
+
+
+
+
+
+### Check basic authentication for /user/{id} endpoint
+```
+start api with the following command
+$ go install go-restApi_basic
+$ go-restApi_basic start
+Now add username & password in postman, send the GET request & see the status code if for User: prangan Pass: 1234
+```
