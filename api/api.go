@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
+	"go-restApi_basic/auth"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -212,13 +213,13 @@ func HandleRequests(port string)  {
 	DBInit()
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage).Methods("GET")
-	myRouter.HandleFunc("/users", ReturnAllUser).Methods("GET")
+	myRouter.HandleFunc("/users", auth.MiddlewareAuth(ReturnAllUser)).Methods("GET")
 
 	// Ordering is important here! This has to be defined before the other '/user' endpoint
-	myRouter.HandleFunc("/user/{id}", CreateNewUser).Methods("POST")
-	myRouter.HandleFunc("/user/{id}", UpdateUser).Methods("PUT")
-	myRouter.HandleFunc("/user/{id}", DeleteUser).Methods("DELETE")
-	myRouter.HandleFunc("/user/{id}", ReturnSingleUser).Methods("GET")
+	myRouter.HandleFunc("/user/{id}", auth.MiddlewareAuth(CreateNewUser)).Methods("POST")
+	myRouter.HandleFunc("/user/{id}", auth.MiddlewareAuth(UpdateUser)).Methods("PUT")
+	myRouter.HandleFunc("/user/{id}", auth.MiddlewareAuth(DeleteUser)).Methods("DELETE")
+	myRouter.HandleFunc("/user/{id}", auth.MiddlewareAuth(ReturnSingleUser)).Methods("GET")
 
 	log.Fatal(http.ListenAndServe(":"+port,myRouter))
 }
