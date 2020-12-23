@@ -57,3 +57,10 @@ func MiddlewareAuth(original http.HandlerFunc) func(http.ResponseWriter, *http.R
 
 	}
 }
+
+/*
+Middleware basic
+https://www.calhoun.io/5-useful-ways-to-use-closures-in-go/
+https://medium.com/@matryer/the-http-handler-wrapper-technique-in-golang-updated-bc7fbcffa702
+https://medium.com/@matryer/writing-middleware-in-golang-and-how-go-makes-it-so-much-fun-4375c1246e81
+*/
