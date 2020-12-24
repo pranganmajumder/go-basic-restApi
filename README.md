@@ -36,6 +36,7 @@ Run the binary file ``` $ go-restApi_basic start```
 ___
 * ```go-restApi_basic start -h``` or ```go-restApi_basic start -help```
 * to change the default port  ```go-restApi_basic start --port=8000```
+* ```$ go run main.go --port=8000``` it'll start the port at 8000
 
 
 

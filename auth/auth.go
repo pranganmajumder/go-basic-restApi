@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 )
 
@@ -39,8 +38,10 @@ import (
 
 
 
-func MiddlewareAuth(original http.HandlerFunc) func(http.ResponseWriter, *http.Request)  {
+func MiddlewareAuth(original http.HandlerFunc) http.HandlerFunc  {
+	//fmt.Println("Got MiddlewareAuth()")
 	return func(res http.ResponseWriter, req *http.Request) {
+		//fmt.Println("Called...................")
 		user := "prangan"
 		pass := "1234"
 		username, password, authOk := req.BasicAuth()
@@ -52,7 +53,7 @@ func MiddlewareAuth(original http.HandlerFunc) func(http.ResponseWriter, *http.R
 			http.Error(res, "Access Denied" , http.StatusUnauthorized)
 			return
 		}
-		fmt.Println("Middle Auth running")
+		//fmt.Println("Middle Auth running")
 		original.ServeHTTP(res, req)
 
 	}

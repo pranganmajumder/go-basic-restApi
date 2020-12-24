@@ -5,7 +5,6 @@
 package api
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -13,7 +12,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 )
 
 type User struct {
@@ -43,48 +41,30 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+
+
 func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit:  returnAllUser")
-
-
-	header := r.Header.Get("Authorization")
-	// added Basic authorization
-	if ok:= BasicAuthentication(header); ok==false{
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Authorization failed"))
-		return
-	}
 	json.NewEncoder(w).Encode(Users)
 }
 
-func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
-	header := r.Header.Get("Authorization")
 
-	// added Basic authorization
-	if ok:= BasicAuthentication(header); ok==false{
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Authorization failed"))
-		return
-	}
-	//fmt.Println("Header   ", header)
+
+
+
+
+func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("This is our ReturnSingleUser function")
 	//vars := mux.Vars(r)
 	//key := vars["id"]
 
 	key := parseID(r)
-	//fmt.Printf("Type of key is %T  ", key)
-	//fmt.Println("Key:   ", key)
-
 	// Loop over all of our Users
 	// if the user.Id equals the key we pass in return the article encoded as JSON
-
-
-	//fmt.Println("Users    is  ", Users)
 	for _, user := range Users{
-		//fmt.Println("user : ", user)
 		if user.Id == key{
 			w.WriteHeader(http.StatusOK)
-			//fmt.Println("got Status Code")
 			json.NewEncoder(w).Encode(user)
 			return
 		}
@@ -93,31 +73,25 @@ func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write([]byte("400 - User not found in the list"))
-	//fmt.Println("Yea")
 }
 
-func BasicAuthentication(header string)bool  {
-	b := strings.Split(header , " ")
-	//fmt.Println("B   =  ", b[1])
-	decoded , _ := base64.StdEncoding.DecodeString(b[1])
-	//fmt.Println("encoded  :  " , string(encoded))
-	name := strings.Split(string(decoded), ":")
-	if name[0] == "prangan" && name[1] == "1234"{
-		return true
-	}
-	return false
-}
+//func BasicAuthentication(header string)bool  {
+//	b := strings.Split(header , " ")
+//	//fmt.Println("B   =  ", b[1])
+//	decoded , _ := base64.StdEncoding.DecodeString(b[1])
+//	//fmt.Println("encoded  :  " , string(encoded))
+//	name := strings.Split(string(decoded), ":")
+//	if name[0] == "prangan" && name[1] == "1234"{
+//		return true
+//	}
+//	return false
+//}
+
+
+
 
 // Endpoint : /user/id
 func CreateNewUser(w http.ResponseWriter, r *http.Request) {
-	header := r.Header.Get("Authorization")
-	// added Basic authorization
-	if ok:= BasicAuthentication(header); ok==false{
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Authorization failed"))
-		return
-	}
-
 	// get the body of our POST request
 	// return the string response containing the request body
 	reqBody , _ := ioutil.ReadAll(r.Body)
@@ -147,16 +121,13 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user) // send the json encoded format
 }
 
+
+
+
+
+
 // (POST) Endpoint : /user/id
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
-	header := r.Header.Get("Authorization")
-	// added Basic authorization
-	if ok:= BasicAuthentication(header); ok==false{
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Authorization failed"))
-		return
-	}
-
 	vars := mux.Vars(r)
 	var user User
 
@@ -180,16 +151,12 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
+
+
+
+
 // (DELETE) Endpoint : /user/id
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
-	header := r.Header.Get("Authorization")
-	// added Basic authorization
-	if ok:= BasicAuthentication(header); ok==false{
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Authorization failed"))
-		return
-	}
-
 	// we will need to parse the path parameters
 	vars := mux.Vars(r)
 	// we will need to extract the `id` of the user we wish to delete
@@ -209,10 +176,14 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 
 
+
+
+
 func HandleRequests(port string)  {
 	DBInit()
 	myRouter := mux.NewRouter().StrictSlash(true)
 	myRouter.HandleFunc("/", homePage).Methods("GET")
+
 	myRouter.HandleFunc("/users", auth.MiddlewareAuth(ReturnAllUser)).Methods("GET")
 
 	// Ordering is important here! This has to be defined before the other '/user' endpoint
@@ -223,6 +194,9 @@ func HandleRequests(port string)  {
 
 	log.Fatal(http.ListenAndServe(":"+port,myRouter))
 }
+
+
+
 
 func DBInit()  {
 	Users = []User{
