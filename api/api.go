@@ -46,7 +46,10 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit:  returnAllUser")
-	json.NewEncoder(w).Encode(Users)
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(Users) ; err != nil{
+		log.Fatal(err)
+	}
 }
 
 
@@ -71,7 +74,7 @@ func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// if the user Id is not found in the list return a bad request
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
-	w.WriteHeader(http.StatusBadRequest)
+	w.WriteHeader(http.StatusNoContent)
 	w.Write([]byte("400 - User not found in the list"))
 }
 
@@ -95,11 +98,12 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body
 	reqBody , _ := ioutil.ReadAll(r.Body)
-	fmt.Println("createdNewUser" )
+	fmt.Println("created  NewUser" )
 	// fmt.Fprintf(w, "%v", string(reqBody)) // print request body in responseBody
 
 	vars := mux.Vars(r)
 	id := vars["id"]
+	//key := parseID(r)
 	// check if ID is in the list or not
 	for _, u := range Users{
 		if u.Id == id{
@@ -118,6 +122,7 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	// append this to our Users array
 	// update our global Users array to include our new User
 	Users = append(Users, user)
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(user) // send the json encoded format
 }
 
@@ -135,10 +140,13 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-
+	//fmt.Println("calling ..............")
+	//fmt.Printf("vars[id]  = %v", vars["id"])
+	//key := parseID(r)
 	for index, u := range Users{
 		if u.Id == vars["id"]{
 			fmt.Println("Calling updateUser function")
+			w.WriteHeader(http.StatusOK)
 			Users[index] = user
 			json.NewEncoder(w).Encode(user) // you'll see the json user data in the response body
 			return
