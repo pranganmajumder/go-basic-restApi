@@ -131,24 +131,25 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 
 
 
-// (POST) Endpoint : /user/id
+// (PUT) Endpoint : /user/id
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+	id := vars["id"]
 	var user User
 
 	if err := json.NewDecoder(r.Body).Decode(&user) ; err!= nil{
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	//fmt.Println("calling ..............")
-	//fmt.Printf("vars[id]  = %v", vars["id"])
-	//key := parseID(r)
+
 	for index, u := range Users{
-		if u.Id == vars["id"]{
-			fmt.Println("Calling updateUser function")
+		if u.Id == id{
 			w.WriteHeader(http.StatusOK)
 			Users[index] = user
-			json.NewEncoder(w).Encode(user) // you'll see the json user data in the response body
+			err := json.NewEncoder(w).Encode(user) // you'll see the json user data in the response body
+			if err != nil{
+				fmt.Println(err)
+			}
 			return
 		}
 	}
@@ -173,6 +174,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	for index, user := range Users{
 		if user.Id == id{
 			Users = append(Users[:index] , Users[index+1:]...)
+			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(user) // you'll see the deleted json data in the response body
 			return
 		}
@@ -189,7 +191,7 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 
 func HandleRequests(port string)  {
 	DBInit()
-	myRouter := mux.NewRouter().StrictSlash(true)
+	myRouter := mux.NewRouter()
 	myRouter.HandleFunc("/", homePage).Methods("GET")
 
 	myRouter.HandleFunc("/users", auth.MiddlewareAuth(ReturnAllUser)).Methods("GET")
