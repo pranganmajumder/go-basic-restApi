@@ -4,7 +4,6 @@ import (
 	"net/http"
 )
 
-
 ////Sabik Middleware
 
 //func BasicAuthentication(next http.HandlerFunc) http.HandlerFunc {
@@ -32,25 +31,19 @@ import (
 //	}
 //}
 
-
-
-
-
-
-
-func MiddlewareAuth(original http.HandlerFunc) http.HandlerFunc  {
+func MiddlewareAuth(original http.HandlerFunc) http.HandlerFunc {
 	//fmt.Println("Got MiddlewareAuth()")
 	return func(res http.ResponseWriter, req *http.Request) {
 		//fmt.Println("Called...................")
 		user := "prangan"
 		pass := "1234"
 		username, password, authOk := req.BasicAuth()
-		if authOk == false{
-			http.Error(res, "Access Denied" , http.StatusUnauthorized)
+		if authOk == false {
+			http.Error(res, "Access Denied", http.StatusUnauthorized)
 			return
 		}
-		if username != user || password != pass{
-			http.Error(res, "Access Denied" , http.StatusUnauthorized)
+		if username != user || password != pass {
+			http.Error(res, "Access Denied", http.StatusUnauthorized)
 			return
 		}
 		//fmt.Println("Middle Auth running")
