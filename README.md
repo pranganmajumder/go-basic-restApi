@@ -1,4 +1,6 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/wgliang/logcool)](https://goreportcard.com/report/github.com/wgliang/logcool)
 # Run api server in terminal
+
 ```$ go run main.go```
 ## To run unit testing
 
