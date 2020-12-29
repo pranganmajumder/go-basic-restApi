@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/wgliang/logcool)](https://goreportcard.com/report/github.com/wgliang/logcool)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pranganmajumder/go-basic-restApi)](https://goreportcard.com/report/github.com/pranganmajumder/go-basic-restApi)
 # Run api server in terminal
 
 ```$ go run main.go```
