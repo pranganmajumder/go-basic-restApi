@@ -1,10 +1,19 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/pranganmajumder/go-basic-restApi)](https://goreportcard.com/report/github.com/pranganmajumder/go-basic-restApi)
 # Run api server in terminal
+```bash
+Build and run the app locally
+$ go build -o <binary name you want>
+$ ./binaryName start
+
+to add flag
+$ ./binaryName start -p=6000 
+```
 
 ```$ go run main.go```
+
 ## To run unit testing
 
-   * sinle function unit testing
+   * single function unit testing
         * generate main_test.go file then design the function you want to test
     
    * run main_test.go from drag and drop
@@ -30,10 +39,22 @@ it will create a file command_name.go inside the cmd directory, modify it accord
 
 ### To start api using cli
 ___
-```$ go install go-restApi_basic```
-it'll create a binary file named go-restApi_basic</br>
+```$ go install go-basic-restApi``` </br>
+It'll create a binary file named go-basic-restApi</br>
 
-Run the binary file ``` $ go-restApi_basic start```
+Run the binary file <br>
+``` $ go-basic-restApi start```
+
+#####another way</br>
+ * build the file in your project directory</br>
+```$ go build -o <binaryfilename_you_want>```</br>
+   ex : ```$ go build -o apiserver``` </br>
+It will create a binary file inside your project directory named "apiserver"
+ * Run the binary file</br>
+  ``` $ ./apiserver start``` or </br>
+   ```$ ./apiserver start -p <port_name_you_want>```
+ * Check the port from curl or postman
+
 ##### CLI command
 ___
 * ```go-restApi_basic start -h``` or ```go-restApi_basic start -help```
@@ -50,4 +71,12 @@ start api with the following command
 $ go install go-restApi_basic
 $ go-restApi_basic start
 Now add username & password in postman, send the GET request & see the status code if for User: prangan Pass: 1234
+```
+
+
+
+#### Run using dockerfile
+```bigquery
+docker build -t <give a image name> .
+docker run -d -p localport:containerport --name <give container name> <given_image_name> 
 ```

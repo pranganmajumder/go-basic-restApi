@@ -1,4 +1,4 @@
-module go-restApi_basic
+module github.com/pranganmajumder/go-basic-restApi
 
 go 1.13
 

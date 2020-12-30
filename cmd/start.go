@@ -17,7 +17,7 @@ package cmd
 
 import (
 	"fmt"
-	"go-restApi_basic/api"
+	"github.com/pranganmajumder/go-basic-restApi/api"
 
 	//"go-restApi_basic/api"
 	"github.com/spf13/cobra"

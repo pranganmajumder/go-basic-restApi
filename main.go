@@ -3,7 +3,7 @@
 
 package main
 
-import "go-restApi_basic/cmd"
+import "github.com/pranganmajumder/go-basic-restApi/cmd"
 
 func main() {
 	cmd.Execute()

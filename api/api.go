@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
-	"go-restApi_basic/auth"
+	"github.com/pranganmajumder/go-basic-restApi/auth"
 	"io/ioutil"
 	"log"
 	"net/http"
