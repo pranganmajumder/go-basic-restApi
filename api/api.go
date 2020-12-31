@@ -46,7 +46,7 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit:  returnAllUser")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(Users); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -61,7 +61,9 @@ func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 	for _, user := range Users {
 		if user.Id == key {
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(user)
+			if err:= json.NewEncoder(w).Encode(user) ; err != nil{
+					fmt.Println("Error occurred : " , err)
+			}
 			return
 		}
 	}

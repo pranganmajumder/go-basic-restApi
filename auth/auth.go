@@ -38,17 +38,12 @@ func MiddlewareAuth(original http.HandlerFunc) http.HandlerFunc {
 		user := "prangan"
 		pass := "1234"
 		username, password, authOk := req.BasicAuth()
-		if authOk == false {
-			http.Error(res, "Access Denied", http.StatusUnauthorized)
-			return
-		}
-		if username != user || password != pass {
+		if authOk == false || username != user || password != pass {
 			http.Error(res, "Access Denied", http.StatusUnauthorized)
 			return
 		}
 		//fmt.Println("Middle Auth running")
 		original.ServeHTTP(res, req)
-
 	}
 }
 
