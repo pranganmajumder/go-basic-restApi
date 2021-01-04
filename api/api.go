@@ -13,13 +13,15 @@ import (
 	"net/http"
 )
 
+// User is a struct type data structure
 type User struct {
-	Id         string `json:"id"`
+	ID         string `json:"id"`
 	Name       string `json:"name"`
 	Varsity    string `json:"varsity"`
 	Occupation string `json:"occupation"`
 }
 
+// Users is a array of type of User
 var Users []User
 
 func parseID(request *http.Request) string {
@@ -42,6 +44,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//ReturnAllUser returns all the users available in the Database
 func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit:  returnAllUser")
 	w.WriteHeader(http.StatusOK)
@@ -50,6 +53,7 @@ func ReturnAllUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//ReturnSingleUser return one user specified with the Url ID
 func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println("This is our ReturnSingleUser function")
 	//vars := mux.Vars(r)
@@ -57,17 +61,17 @@ func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 
 	key := parseID(r)
 	// Loop over all of our Users
-	// if the user.Id equals the key we pass in return the article encoded as JSON
+	// if the user.ID equals the key we pass in return the article encoded as JSON
 	for _, user := range Users {
-		if user.Id == key {
+		if user.ID == key {
 			w.WriteHeader(http.StatusOK)
-			if err:= json.NewEncoder(w).Encode(user) ; err != nil{
-					fmt.Println("Error occurred : " , err)
+			if err := json.NewEncoder(w).Encode(user); err != nil {
+				fmt.Println("Error occurred : ", err)
 			}
 			return
 		}
 	}
-	// if the user Id is not found in the list return a bad request
+	// if the user ID is not found in the list return a bad request
 	// https://stackoverflow.com/questions/40096750/how-to-set-http-status-code-on-http-responsewriter
 	w.WriteHeader(http.StatusNoContent)
 	w.Write([]byte("400 - User not found in the list"))
@@ -85,7 +89,7 @@ func ReturnSingleUser(w http.ResponseWriter, r *http.Request) {
 //	return false
 //}
 
-// Endpoint : /user/id
+//CreateNewUser creates a new user with Url Id ,  Endpoint : /user/id
 func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	// get the body of our POST request
 	// return the string response containing the request body
@@ -98,7 +102,7 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	//key := parseID(r)
 	// check if ID is in the list or not
 	for _, u := range Users {
-		if u.Id == id {
+		if u.ID == id {
 			fmt.Println("User ID matched")
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("400 - User ID already contains in the list. Please Change your ID"))
@@ -117,7 +121,7 @@ func CreateNewUser(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(user) // send the json encoded format
 }
 
-// (PUT) Endpoint : /user/id
+// UpdateUser updates a user with specified Url Id (PUT) Endpoint : /user/id
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
@@ -129,7 +133,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for index, u := range Users {
-		if u.Id == id {
+		if u.ID == id {
 			w.WriteHeader(http.StatusOK)
 			Users[index] = user
 			err := json.NewEncoder(w).Encode(user) // you'll see the json user data in the response body
@@ -146,7 +150,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// (DELETE) Endpoint : /user/id
+//DeleteUser deletes a user from DB specified with Url ID ,  (DELETE) Endpoint : /user/id
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	// we will need to parse the path parameters
 	vars := mux.Vars(r)
@@ -154,18 +158,19 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 
 	for index, user := range Users {
-		if user.Id == id {
+		if user.ID == id {
 			Users = append(Users[:index], Users[index+1:]...)
 			w.WriteHeader(http.StatusOK)
 			json.NewEncoder(w).Encode(user) // you'll see the deleted json data in the response body
 			return
 		}
 	}
-	// if user Id is not present in the list , return a error code
+	// if user ID is not present in the list , return a error code
 	w.WriteHeader(http.StatusBadRequest)
 	w.Write([]byte("400 - User not found in the list"))
 }
 
+// HandleRequests handle all the API Endpoint
 func HandleRequests(port string) {
 	DBInit()
 	myRouter := mux.NewRouter()
@@ -182,10 +187,11 @@ func HandleRequests(port string) {
 	log.Fatal(http.ListenAndServe(":"+port, myRouter))
 }
 
+// DBInit inits the database initially
 func DBInit() {
 	Users = []User{
-		{Id: "1", Name: "Prangan", Varsity: "CoU", Occupation: "Student"},
-		{Id: "2", Name: "Sakib", Varsity: "NSU", Occupation: "software Engineer"},
+		{ID: "1", Name: "Prangan", Varsity: "CoU", Occupation: "Student"},
+		{ID: "2", Name: "Sakib", Varsity: "NSU", Occupation: "software Engineer"},
 	}
 }
 

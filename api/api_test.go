@@ -16,28 +16,28 @@ func TestReturnSingleUser(t *testing.T) {
 
 	tests := []struct {
 		Method             string
-		Id                 string
+		ID                 string
 		ExpectedStatusCode int
 	}{
 		// TODO: Add test cases.
 		{
 			Method:             "GET",
-			Id:                 "1",
+			ID:                 "1",
 			ExpectedStatusCode: http.StatusOK,
 		},
 		{
 			Method:             "GET",
-			Id:                 "2",
+			ID:                 "2",
 			ExpectedStatusCode: http.StatusOK,
 		},
 		{
 			Method:             "GET",
-			Id:                 "3",
+			ID:                 "3",
 			ExpectedStatusCode: http.StatusNoContent,
 		},
 	}
 	for index, tt := range tests {
-		req, err := http.NewRequest(tt.Method, "http://localhost:8080/user/userId?id="+tt.Id, nil)
+		req, err := http.NewRequest(tt.Method, "http://localhost:8080/user/userId?id="+tt.ID, nil)
 		if err != nil {
 			t.Fatalf("test request failed for testCase  : %v ", index+1)
 		}
@@ -87,7 +87,7 @@ func TestCreateNewUser(t *testing.T) {
 		{
 			Method: "POST",
 			Person: User{
-				Id:         "3",
+				ID:         "3",
 				Name:       "Dipika Padukone",
 				Varsity:    "North South University",
 				Occupation: "Modelling",
@@ -98,7 +98,7 @@ func TestCreateNewUser(t *testing.T) {
 	for index, tt := range tests {
 		byteData, _ := json.Marshal(tt.Person)
 
-		req, err := http.NewRequest(tt.Method, "http://localhost:8080/api/user/userId?id="+tt.Person.Id, bytes.NewReader(byteData))
+		req, err := http.NewRequest(tt.Method, "http://localhost:8080/api/user/userId?id="+tt.Person.ID, bytes.NewReader(byteData))
 		if err != nil {
 			t.Fatalf("unable to create any request : %v", err)
 		}
@@ -116,15 +116,15 @@ func TestUpdateUser(t *testing.T) {
 	tests := []struct {
 		Method             string
 		Person             User
-		Url                string
+		URL                string
 		ExpectedStatusCode int
 	}{
 		// TODO: Add test cases.
 		{
 			Method: "PUT",
-			Url:    "/user/%s",
+			URL:    "/user/%s",
 			Person: User{
-				Id:         "1",
+				ID:         "1",
 				Name:       "Amitav Baccan",
 				Varsity:    "Honululu University",
 				Occupation: "Actor",
@@ -133,9 +133,9 @@ func TestUpdateUser(t *testing.T) {
 		},
 		{
 			Method: "PUT",
-			Url:    "/user/%s",
+			URL:    "/user/%s",
 			Person: User{
-				Id:         "4",
+				ID:         "4",
 				Name:       "Emruz Hosasin",
 				Varsity:    "CUET",
 				Occupation: "Software Engineer",
@@ -149,7 +149,7 @@ func TestUpdateUser(t *testing.T) {
 
 	for _, tt := range tests {
 		byteData, _ := json.Marshal(tt.Person)
-		url := fmt.Sprintf(tt.Url, tt.Person.Id)
+		url := fmt.Sprintf(tt.URL, tt.Person.ID)
 
 		req, err := http.NewRequest(tt.Method, url, bytes.NewReader(byteData))
 		if err != nil {
@@ -157,7 +157,7 @@ func TestUpdateUser(t *testing.T) {
 		}
 
 		vars := make(map[string]string)
-		vars["id"] = tt.Person.Id
+		vars["id"] = tt.Person.ID
 		req = mux.SetURLVars(req, vars)
 
 		res := httptest.NewRecorder()
@@ -169,21 +169,21 @@ func TestUpdateUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	tests := []struct {
 		Method             string
-		Id                 string
-		Url                string
+		ID                 string
+		URL                string
 		ExpectedStatusCode int
 	}{
 		// TODO: Add test cases.
 		{
 			Method:             "DELETE",
-			Id:                 "1",
-			Url:                "/user/%s",
+			ID:                 "1",
+			URL:                "/user/%s",
 			ExpectedStatusCode: http.StatusOK,
 		},
 		{
 			Method:             "DELETE",
-			Id:                 "20",
-			Url:                "/user/%s",
+			ID:                 "20",
+			URL:                "/user/%s",
 			ExpectedStatusCode: http.StatusBadRequest,
 		},
 	}
@@ -191,8 +191,8 @@ func TestDeleteUser(t *testing.T) {
 	router.HandleFunc("/user/{id}", DeleteUser).Methods(http.MethodDelete)
 
 	for _, tt := range tests {
-		byteData, _ := json.Marshal(tt.Id)
-		url := fmt.Sprintf(tt.Url, tt.Id)
+		byteData, _ := json.Marshal(tt.ID)
+		url := fmt.Sprintf(tt.URL, tt.ID)
 
 		req, err := http.NewRequest(tt.Method, url, bytes.NewReader(byteData))
 		if err != nil {
@@ -200,7 +200,7 @@ func TestDeleteUser(t *testing.T) {
 		}
 
 		vars := make(map[string]string)
-		vars["id"] = tt.Id
+		vars["id"] = tt.ID
 		req = mux.SetURLVars(req, vars)
 
 		res := httptest.NewRecorder()
