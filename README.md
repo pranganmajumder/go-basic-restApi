@@ -80,7 +80,7 @@ Now add username & password in postman, send the GET request & see the status co
 ```bigquery
 docker build -t <give a image name> .
 docker run -d -p localport:containerport --name <give container name> <given_image_name> 
-```
+``` 
 
 ######Other Necessary command</br>
 |Command | Use |
