@@ -17,14 +17,14 @@ ENTRYPOINT ["./apiserver"]
 
 
 
-#-------------------------------------------------------------------------------------------------
-
-# At firt build the binary file into your local directory run the follwoing command
-# go build -o apiserver .
-# it will create a binaryfile "apiserver" inside your project root directory
-#just copy the previously build binaryfile "apiserver" into your workdirectory
-#that's why don't neet to build the binary file so skipped it in RUN section
-
+##-------------------------------------------------------------------------------------------------
+#
+## At firt build the binary file into your local directory run the follwoing command
+## go build -o apiserver .
+## it will create a binaryfile "apiserver" inside your project root directory
+##just copy the previously build binaryfile "apiserver" into your workdirectory
+##that's why don't neet to build the binary file so skipped it in RUN section
+#
 #FROM golang:latest
 #WORKDIR /go/src/github.com/pranganmajumder/go-basic-restApi
 #COPY apiserver  /go/src/github.com/pranganmajumder/go-basic-restApi
@@ -91,3 +91,33 @@ ENTRYPOINT ["./apiserver"]
 
 # it will start like ./apiserver start
 #CMD ["./apiserver", "start"]
+
+
+
+
+
+
+#
+##-------------------------------------multistage : using golang image -----------------------#
+## using golang:latest image
+#FROM golang:latest as prangan
+#
+#WORKDIR /prangan
+#
+#COPY . .
+#
+#RUN go mod tidy
+## Build the binaries from the source
+#RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o apiserver .
+#
+## Take a new image
+#FROM alpine
+#WORKDIR /prangan
+#COPY --from=prangan /prangan/apiserver .
+#
+#EXPOSE 8080
+#
+## it will start like ./apiserver start
+#ENTRYPOINT ["./apiserver"]
+#
+#CMD ["start"]
